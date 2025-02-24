@@ -56,37 +56,97 @@ def preprocess_text(text):
 # Streamlit App
 st.set_page_config(page_title="Sarcasm Detection", page_icon="😏", layout="centered")
 
-# Custom CSS for colorful design
+# Custom CSS for light and dark mode
 st.markdown(
     """
     <style>
     .stApp {
-        background-color: #f0f2f6;
+        background-color: var(--background-color);
+        color: var(--text-color);
     }
     .stTextInput>div>div>input {
-        background-color: #ffffff;
-        color: #000000;
+        background-color: var(--input-bg-color);
+        color: var(--input-text-color);
     }
     .stButton>button {
-        background-color: #4CAF50;
-        color: white;
+        background-color: var(--button-bg-color);
+        color: var(--button-text-color);
         border-radius: 5px;
         padding: 10px 20px;
         font-size: 16px;
     }
     .stButton>button:hover {
-        background-color: #45a049;
+        background-color: var(--button-hover-bg-color);
     }
     .stMarkdown {
-        color: #333333;
+        color: var(--text-color);
     }
     .stHeader {
-        color: #4CAF50;
+        color: var(--header-color);
     }
     </style>
     """,
     unsafe_allow_html=True
 )
+
+# Detect the current theme using JavaScript
+st.markdown(
+    """
+    <script>
+    function getTheme() {
+        const theme = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        window.parent.postMessage({theme: theme}, '*');
+    }
+    getTheme();
+    </script>
+    """,
+    unsafe_allow_html=True
+)
+
+# Listen for the theme message from JavaScript
+theme = st.session_state.get("theme", "light")
+
+# Update the theme based on the message
+if "theme" in st.session_state:
+    theme = st.session_state["theme"]
+
+# Set CSS variables based on the theme
+if theme == "light":
+    st.markdown(
+        """
+        <style>
+        :root {
+            --background-color: #f0f2f6;
+            --text-color: #333333;
+            --input-bg-color: #ffffff;
+            --input-text-color: #000000;
+            --button-bg-color: #4CAF50;
+            --button-text-color: #ffffff;
+            --button-hover-bg-color: #45a049;
+            --header-color: #4CAF50;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+else:
+    st.markdown(
+        """
+        <style>
+        :root {
+            --background-color: #0E1117;
+            --text-color: #ffffff;
+            --input-bg-color: #262730;
+            --input-text-color: #ffffff;
+            --button-bg-color: #4CAF50;
+            --button-text-color: #ffffff;
+            --button-hover-bg-color: #45a049;
+            --header-color: #4CAF50;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
 
 # App Title
 st.title("😏 **Multilingual Sarcasm Detection**")
